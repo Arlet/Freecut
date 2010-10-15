@@ -33,6 +33,7 @@
 #include "cli.h"
 #include "flash.h"
 #include "version.h"
+#include "dial.h"
 
 static FILE usb = FDEV_SETUP_STREAM( usb_putchar, usb_getchar, _FDEV_SETUP_RW );
 
@@ -68,6 +69,7 @@ int main( void )
     lcd_init( );
     keypad_init( );
     flash_init( );
+    dial_init( );
 
     // short beep to show we're awake
     beeper_on( 1760 );
@@ -83,7 +85,10 @@ int main( void )
 	if( flag_25Hz )
 	{
 	    flag_25Hz = 0;
+	    dial_poll( );
 	    poll_keypad( );
+	    lcd_pos( 0 );
+	    fprintf( &lcd, "sp=%d pr=%d sz=%d", dial_get_speed(), dial_get_pressure(), dial_get_size( ) );
 	}
 	if( flag_Hz )
 	{

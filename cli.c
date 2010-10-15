@@ -46,7 +46,6 @@ static uint8_t argc;
 static uint8_t curtok;
 static char echo = 1;
 static jmp_buf cmd_error;
-static char *errorbuf = (char *) argv;
 
 enum
 {
