@@ -41,15 +41,14 @@ Top view of connector:
 |10  8  6  4  2 |
 +---------------+
 
-And upload the freecut.hex file.
-
 ===edge of board======
 
+And upload the freecut.hex file.
+
 After reprogramming, the machine should beep, and display "Freecut v0.1" on the LCD display.
+Use keypad to load/unload paper (bottom right is unload, one to the left is load)
 
 Use the USB cable to communicate (keypad is mostly non-functional, as well as the 3 dials on the front).
-
-Use keypad to load/unload paper (bottom right is unload, one to the left is load)
 
 USB uses 115200 baud, 8N1.
 
@@ -68,8 +67,11 @@ curve <x0> <y0> <x1> <y1> <x2> <y2> <x3> <y3>
 	draw cubic Bezier curve
 
 speed <num>
-	lower numbers are faster. 40 is about the fastest practical speed. 100 is reasonable for most cases. The speed
-	is tied directly to an AVR timer: speed 100 -> 250 kHz/100 = 2.5 kHz stepping frequency -> 6.25"/second
+	lower numbers are faster. 60 is about the fastest practical
+	speed. 100 is reasonable for most cases. The speed is tied
+	directly to an AVR timer: speed 100 -> 250 kHz/100 = 2.5 kHz
+	stepping frequency -> 6.25"/second. If the speed is too high,
+	the motors will start skipping. 
 
 press <num>
 	lower numbers are more pressure. 1023 is minimum, 0 is maximum.
