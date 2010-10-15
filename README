@@ -1,0 +1,71 @@
+Freecut v0.1
+
+Free firmware replacement for Cricut Personal paper cutter.
+
+***********************************************************************************
+* IMPORTANT: REPROGRAMMING THE AVR WILL PERMANENTLY ERASE YOUR ORIGINAL FIRMWARE  *
+***********************************************************************************
+
+!!! THERE IS NO WAY TO GET THE ORIGINAL FIRMWARE BACK !!!
+
+Firmware cannot be copied from another machine (it has been locked and cannot be
+read from the CPU)
+
+Firmware cannot be restored through any PC application used for normal
+firmware upgrades.
+
+This firmware has only been tested on the machine that I have. It may
+not work on your machine.  It may cause permanent damage, and it will
+certainly void your warranty.
+
+If you still want to proceed:
+
+Attach an AVR programming cable to cartridge connector on the main board (J5):
+
+ J5   |  AVR
+------+-----
+  1   |  PDO
+  3   |  SCK
+  4   |  PDI
+  5   |  RESET
+  6   |  GND
+
+Top view of connector:
+
+       J5
++----        ---+
+| 9  7  5  3  1 |
+|10  8  6  4  2 |
++---------------+
+
+
+===edge of board======
+
+After reprogramming, the machine should beep, and display "Freecut v0.1" on the LCD display.
+
+Use the USB cable to communicate (keypad is mostly non-functional, as well as the 3 dials on the front).
+
+USB uses 115200 baud, 8N1.
+
+Following commands are available:
+
+version
+move <x> <y>		
+draw <x> <y>
+curve <x0> <y0> <x1> <y1> <x2> <y2> <x3> <y3>
+speed <num>
+press <num>
+flash 
+
+All coordinates integer step numbers (~400 steps/inch)
+
+speed - lower numbers are faster. 40 is about the fastest practical speed. 100 is reasonable for most cases. 
+press - lower numbers are more pressure. 1023 is minimum, 0 is maximum.
+flash - just dumps the internal AT45DB041 flash chip in CAR mode.
+
+Don't send too many commands too quickly. Wait for '>' prompt before sending another line.
+
+NOTE: This is the first quick & dirty version. User interface may experience
+sudden changes (like a more sensible speed/press syntax)
+
+e-mail: <freecutfirmware@gmail.com>
