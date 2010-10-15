@@ -138,7 +138,7 @@ void timer_init( void )
 
     // set timer 2, variable period for stepper
     TCCR2  = (1 << WGM21) | 4;					// prescaler 1/256 -> 250 kHz
-    OCR2   = 65;						// default frequency = 250/125 = 2 kHz step
+    OCR2   = 99;						// default frequency = 250/100 = 2.5 kHz step
     TIMSK |= (1 << OCIE2);					//
 
     // Timer 3, WGM mode 15 (1111), Fast PWM using OCR3A 
