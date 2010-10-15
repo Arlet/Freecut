@@ -56,18 +56,27 @@ USB uses 115200 baud, 8N1.
 Following commands are available:
 
 version
-move <x> <y>		
+	display version number
+
+move <x> <y>
+	lift pen, and move to coordinates.
+
 draw <x> <y>
+	drop pen, and move to coordinates.
+
 curve <x0> <y0> <x1> <y1> <x2> <y2> <x3> <y3>
+	draw cubic Bezier curve
+
 speed <num>
+	lower numbers are faster. 40 is about the fastest practical speed. 100 is reasonable for most cases. The speed
+	is tied directly to an AVR timer: speed 100 -> 250 kHz/100 = 2.5 kHz stepping frequency -> 6.25"/second
+
 press <num>
-flash 
+	lower numbers are more pressure. 1023 is minimum, 0 is maximum.
 
-All coordinates integer step numbers (~400 steps/inch)
+flash
+	just dumps the internal AT45DB041 flash chip in CAR mode.
 
-speed - lower numbers are faster. 40 is about the fastest practical speed. 100 is reasonable for most cases. 
-press - lower numbers are more pressure. 1023 is minimum, 0 is maximum.
-flash - just dumps the internal AT45DB041 flash chip in CAR mode.
 
 Don't send too many commands too quickly. Wait for '>' prompt before sending another line.
 
