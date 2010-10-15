@@ -156,7 +156,7 @@ void lcd_pos( uint8_t pos )
 int lcd_putchar( char c, FILE *stream )
 {
     if( current_pos >= 16 )	
-        return;
+        return 1;
     rs_h();		// temporarily select data
     lcd_write_nibble( c );
     lcd_write_nibble( c << 4 );
@@ -165,6 +165,7 @@ int lcd_putchar( char c, FILE *stream )
     // fix for split screen
     if( ++current_pos == 8 )
         lcd_pos( current_pos );
+    return 1;
 }
 
 /* 

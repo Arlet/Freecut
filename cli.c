@@ -29,7 +29,6 @@
 #include <avr/eeprom.h>
 #include <avr/pgmspace.h>
 #include <math.h>
-#include "printf.h"
 #include "timer.h"
 #include "cli.h"
 #include "usb.h"

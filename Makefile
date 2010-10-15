@@ -1,4 +1,4 @@
-# Open firmware for Cricut Personal devices.
+# Freecut: open firmware for Cricut Personal devices.
 #
 # 
 # MCU name
@@ -8,7 +8,7 @@ MCU = atmega128
 FORMAT = ihex
 
 # Target file name (without extension).
-TARGET = cricut
+TARGET = freecut
 
 # Speed
 FCLK = 16000000UL

@@ -8,15 +8,18 @@ Free firmware replacement for Cricut Personal paper cutter.
 
 !!! THERE IS NO WAY TO GET THE ORIGINAL FIRMWARE BACK !!!
 
-Firmware cannot be copied from another machine (it has been locked and cannot be
-read from the CPU)
+Original firmware cannot be copied from another machine (it has been
+locked and cannot be read from the CPU)
 
-Firmware cannot be restored through any PC application used for normal
-firmware upgrades.
+Original firmware cannot be restored through any PC application used for
+normal firmware upgrades.
 
-This firmware has only been tested on the machine that I have. It may
-not work on your machine.  It may cause permanent damage, and it will
-certainly void your warranty.
+This Freecut firmware has only been tested on the machine that I have. It
+may not work on your machine.  It may cause permanent damage, and it
+will certainly void your warranty.
+
+Freecut cannot read your original cartridges and may never read them in
+the future.
 
 If you still want to proceed:
 
@@ -38,12 +41,15 @@ Top view of connector:
 |10  8  6  4  2 |
 +---------------+
 
+And upload the freecut.hex file.
 
 ===edge of board======
 
 After reprogramming, the machine should beep, and display "Freecut v0.1" on the LCD display.
 
 Use the USB cable to communicate (keypad is mostly non-functional, as well as the 3 dials on the front).
+
+Use keypad to load/unload paper (bottom right is unload, one to the left is load)
 
 USB uses 115200 baud, 8N1.
 
