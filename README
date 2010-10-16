@@ -1,12 +1,13 @@
 Freecut v0.1
 
-Free firmware replacement for Cricut Personal paper cutter.
+Free firmware replacement for Cricut(tm) Personal paper cutter.
 
-***********************************************************************************
-* IMPORTANT: REPROGRAMMING THE AVR WILL PERMANENTLY ERASE YOUR ORIGINAL FIRMWARE  *
-***********************************************************************************
+*******************************************************************************
+IMPORTANT: REPROGRAMMING THE AVR WILL PERMANENTLY ERASE YOUR ORIGINAL FIRMWARE 
 
-!!! THERE IS NO WAY TO GET THE ORIGINAL FIRMWARE BACK !!!
+         !!! THERE IS NO WAY TO GET THE ORIGINAL FIRMWARE BACK !!!
+
+*******************************************************************************
 
 Original firmware cannot be copied from another machine (it has been
 locked and cannot be read from the CPU)
@@ -20,6 +21,14 @@ will certainly void your warranty.
 
 Freecut cannot read your original cartridges and may never read them in
 the future.
+
+Cricut is a trademark of PROVO CRAFT. 
+
+Freecut is not a PROVO CRAFT product. Freecut was developed completely 
+independently, without any documentation to PROVO CRAFT products, and without
+any original firmware. If you have problems with Freecut, do not consult
+PROVO CRAFT. 
+
 
 If you still want to proceed:
 
@@ -86,3 +95,5 @@ NOTE: This is the first quick & dirty version. User interface may experience
 sudden changes (like a more sensible speed/press syntax)
 
 e-mail: <freecutfirmware@gmail.com>
+
+
