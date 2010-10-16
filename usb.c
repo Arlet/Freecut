@@ -110,7 +110,7 @@ int usb_getchar( FILE *stream )
 }
 
 /*
- * initialize USB UART. Assume fixed baudrate of 115200, and default 8N1 settings.
+ * initialize USB UART. Assume fixed baudrate of 115200, and default 8N1.
  */
 void usb_init( void ) 
 {

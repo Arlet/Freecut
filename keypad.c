@@ -3,12 +3,12 @@
  *
  * Driver for Cricut Personal keypad, with built-in LED indicators.
  * 
- * keypad is designed as a matrix with 15 rows, and 5 colums. The 15 rows are selected using
- * a 16 bit shift register, with CLK/Data inputs. 
- *
- * NOTE: Due to this design, if you press two (or more) keys in the same row simultaneously, the
- * the two corresponding outputs of the shift register are shorted through the keys, and the CPU 
- * gets undefined results.  
+ * keypad is designed as a matrix with 15 rows, and 5 colums. The 15 rows
+ * are selected using a 16 bit shift register, with CLK/Data inputs.
+ * 
+ * NOTE: Due to this design, if you press two (or more) keys in the same row
+ * simultaneously, the the two corresponding outputs of the shift register
+ * are shorted through the keys, and the CPU gets undefined results.
  * 
  * Pinout of the connector is as follows:
  *
@@ -25,10 +25,11 @@
  *  9   |  O1   | PG1  | Row output 1
  * 10   | CLK   | PD7  | Shift register clock
  * 11   | Data  | PD6  | Shift register data in
- * 12   | Test  |      | Shift register data out (for testing, apparently not used)
+ * 12   | Test  |      | Shift register data out (not used)
  *
- * Key layout is straightforward: column 0 is left, column 13 is right, row 0 is top, row 4 is bottom.
- * The grey arrow keys and CUT key are mapped in column 14:
+ * Key layout is straightforward: column 0 is left, column 13 is right, 
+ * row 0 is top, row 4 is bottom. The grey arrow keys and CUT key are 
+ * mapped in column 14:
  * 
  * Row  | Key
  *------+------
@@ -38,8 +39,8 @@
  *  3   | Up 
  *  4   | Down 
  * 
- * The various LEDs are also connected to the shift register outputs, and can be turned on with the 
- * LED Enable pin (0=On, 1=Off).  
+ * The various LEDs are also connected to the shift register outputs, 
+ * and can be turned on with the LED Enable pin (0=On, 1=Off).  
  *
  * LED Layout is as follows:
  *
@@ -130,8 +131,8 @@ char keypad_stop_pressed( void )
 }
 
 /* 
- * keypad_scan: perform a single scan of keyboard. Returns keycode of key that was 
- * pressed (or -1 if nothing).  
+ * keypad_scan: perform a single scan of keyboard. Returns keycode of 
+ * key that was pressed (or -1 if nothing).  
  */
 int keypad_scan( void )
 {

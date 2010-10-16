@@ -88,7 +88,8 @@ int main( void )
 	    dial_poll( );
 	    poll_keypad( );
 	    lcd_pos( 0 );
-	    fprintf( &lcd, "sp=%d pr=%d sz=%d", dial_get_speed(), dial_get_pressure(), dial_get_size( ) );
+	    fprintf( &lcd, "sp=%d pr=%d sz=%d", 
+	    	dial_get_speed(), dial_get_pressure(), dial_get_size( ) );
 	}
 	if( flag_Hz )
 	{

@@ -1,23 +1,25 @@
 /*
  * stepper.c
  *
- * Driver for stepper motors. Each motor is a 6-wire unipolar model. Each of the 4 coils (per motor)
- * can be driven with a full current (through the big transistor) or a reduced current (through a smaller
- * transistor + 47 Ohm resistor). The reduced current I call 'half current', but it may be less.
+ * Driver for stepper motors. Each motor is a 6-wire unipolar model. Each of
+ * the 4 coils (per motor) can be driven with a full current (through the big
+ * transistor) or a reduced current (through a smaller transistor + 47 Ohm
+ * resistor). The reduced current I call 'half current', but it may be less.
  * 
- * The Y motor (pen movement) is controlled through PORTC, and the X motor (mat roller) is controlled 
- * through PORTA. Connections are identical. 
+ * The Y motor (pen movement) is controlled through PORTC, and the X motor
+ * (mat roller) is controlled through PORTA. Connections are identical.
  * 
- * In addition, the Z coordinate is controlled by two pins:
- * PE2 is used for up/down toggle, and PB6 selects the pressure with a PWM signal.
+ * In addition, the Z coordinate is controlled by two pins: PE2 is used
+ * for up/down toggle, and PB6 selects the pressure with a PWM signal.
  * 
- * A small pushbutton is attached to PD1, which is active low when pushed. This button detects when
- * the gray cover on the pen holder is moved all the way to the 'home' position. 
- *
- * Step resolution is about 400 steps/inch. For the cricut personal that means there's about 2400x4800
- * steps of usable space. Coordinate origin is the blade starting point on the mat. A small amount of
- * negative X is allowed to roll the mat out of the machine. 
+ * A small pushbutton is attached to PD1, which is active low when
+ * pushed. This button detects when the gray cover on the pen holder is
+ * moved all the way to the 'home' position.
  * 
+ * Step resolution is about 400 steps/inch. For a 6x12 inch mat, that means
+ * there's about 2400x4800 steps of usable space. Coordinate origin is the
+ * blade starting point on the mat. A small amount of negative X is allowed
+ * to roll the mat out of the machine.
  *
  *
  * Copyright 2010 <freecutfirmware@gmail.com> 
@@ -116,8 +118,8 @@ static struct bresenham
 {
     int step;			// current step
     int steps;			// number of steps in main direction
-    int delta;			// number of steps in other direction (delta <= steps)
-    long error;			// residual error
+    int delta;			// number of steps in other direction 
+    int error;			// residual error
     int dx;			// x step direction
     int dy;			// y step direction
     char steep;			// y > x
@@ -134,13 +136,13 @@ static enum state
 } state;
 
 /*
- * command queue. The stepper controller takes commands from the 
- * queue using step timer interrupt. Main program can put new commands
- * in. 
- *
- * The idea behind this queue is to keep the movement engine as busy as possible,
- * by smoothly joining the end of one stroke with the beginning of the next one, so 
- * ideally the whole path can be traced in one continuous motion.
+ * command queue. The stepper controller takes commands from the queue
+ * using step timer interrupt. Main program can put new commands in.
+ * 
+ * The idea behind this queue is to keep the movement engine as busy as
+ * possible, by smoothly joining the end of one stroke with the beginning of
+ * the next one, so ideally the whole path can be traced in one continuous
+ * motion.
  */
 	
 #define CMD_QUEUE_SIZE 4	// must be power of two
@@ -228,23 +230,24 @@ void stepper_speed( int speed )
 }
 
 /*
- * loading paper. If x < 0, the mat needs to be pulled under the rollers first. This is a heavy 
- * operation, so it's done at reduced speed. In all other cases, just move the pen to the origin.
+ * loading paper. If x < 0, the mat needs to be pulled under the rollers first.
+ * This is a heavy operation, so it's done at reduced speed. In all other
+ * cases, just move the pen to the origin.
  */
 void stepper_load_paper( void )
 {
     if( x < 0 )
     {
 	stepper_speed( 250 ); 	
-	stepper_move( 0, y );	// don't move Y direction yet (it may be slow if Y offset is big)
+	stepper_move( 0, y );	// don't move Y direction yet (it may be slow)
     }
     stepper_speed( 100 );
     stepper_move( 0, 0 );
 }
 
 /* 
- * unloading the paper is simple, just go to a position outside the drawing area, and the
- * mat will roll out.
+ * unloading the paper is simple, just go to a position outside the drawing
+ * area, and the mat will roll out.
  */
 void stepper_unload_paper( void )
 {
@@ -264,8 +267,8 @@ void stepper_pressure( int pressure )
 }
 
 /* 
- * get current position. Only an indication for debugging purposes. During movement, this position
- * changes asynchronously.
+ * get current position. Only an indication for debugging purposes. 
+ * During movement, this position changes asynchronously.
  */
 void stepper_get_pos( int *px, int *py )
 {
@@ -274,7 +277,8 @@ void stepper_get_pos( int *px, int *py )
 }
 
 /*
- * The original cricut firmware also removes the PWM signal, but it seems to work ok when you leave it on.
+ * The original firmware also removes the PWM signal, but it seems 
+ * to work ok when you leave it on.
  */
 static void pen_up( void )
 {
@@ -399,7 +403,8 @@ enum state do_next_command( void )
 }
 
 /*
- * This function is called by a timer interrupt. It does one motor step (if active).
+ * This function is called by a timer interrupt. It does one motor step 
+ * (if active).
  */
 void stepper_tick( void )
 {

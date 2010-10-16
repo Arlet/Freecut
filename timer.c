@@ -4,7 +4,8 @@
  * Timer 0 is used as overall (slow) event timer, as well sleep delay timer.
  * Timer 1 is used as solenoid PWM, through OC1B output
  * Timer 2 is used for stepper timing 
- * Timer 3 is used to generate tones on the speaker through OC3A output, period is adjusted for tone.
+ * Timer 3 is used to generate tones on the speaker through OC3A output, 
+ * period is adjusted for tone.
  *
  *
  * Copyright 2010 <freecutfirmware@gmail.com> 
@@ -77,8 +78,9 @@ void beeper_off( void )
 }
 
 /*
- * usleep: sleep (approximate/minimum) number of microseconds. We use timer0 which runs at 62.50 kHz, 
- * or at 16 usec/tick. Maximum delay is about 2 milliseconds . For longer delays, use msleep().
+ * usleep: sleep (approximate/minimum) number of microseconds. We use timer0 
+ * which runs at 62.50 kHz, or at 16 usec/tick. Maximum delay is about 2 
+ * milliseconds . For longer delays, use msleep().
  *
  */
 void usleep( int usecs )
@@ -126,22 +128,22 @@ void timer_set_pen_pressure( int pressure )
 void timer_init( void )
 {
     // set timer 0 for 250 Hz period
-    TCCR0  = (1 << WGM01) | 6;     				// prescaler 1:256 -> 62.50 kHz timer
-    OCR0   = 249; 		   				// 125 kHz / 250 = 250 Hz 
-    TIMSK  = (1 << OCIE0); 					// enable OVF interrupt 
+    TCCR0  = (1 << WGM01) | 6;     		// prescaler 1:256 -> 62.50 kHz
+    OCR0   = 249; 		  		// 125 kHz / 250 = 250 Hz 
+    TIMSK  = (1 << OCIE0); 	    		// enable OVF interrupt 
 
     // set timer 1, WGM mode 7, fast PWM 10 bit
-    DDRB   |= (1 << 6);						// PB6 is output
-    TCCR1A = (1 << WGM11) | (1 << WGM10) | (1 << COM1B1);	// mode 7, clear OC1B on compare match
-    TCCR1B = (1 << WGM12) | 1;					// mode 7, prescaler = 1
-    OCR1B  = 1023;						// lowest pressure
+    DDRB   |= (1 << 6);				// PB6 is PWM output
+    TCCR1A = (1 << WGM11) | (1 << WGM10) | (1 << COM1B1);
+    TCCR1B = (1 << WGM12) | 1;	
+    OCR1B  = 1023;				// lowest pressure
 
     // set timer 2, variable period for stepper
-    TCCR2  = (1 << WGM21) | 4;					// prescaler 1/256 -> 250 kHz
-    OCR2   = 99;						// default frequency = 250/100 = 2.5 kHz step
-    TIMSK |= (1 << OCIE2);					//
+    TCCR2  = (1 << WGM21) | 4;			// prescaler 1/256 -> 250 kHz
+    OCR2   = 99;				// default speed 2.5k steps
+    TIMSK |= (1 << OCIE2);			//
 
     // Timer 3, WGM mode 15 (1111), Fast PWM using OCR3A 
-    TCCR3A = (1 << COM3A0) | (1 << WGM31) | (1 << WGM30);	// mode 15, toggle OC3A on match
-    TCCR3B = (1 << WGM33) | (1 << WGM32) | 1;   		// 
+    TCCR3A = (1 << COM3A0) | (1 << WGM31) | (1 << WGM30);
+    TCCR3B = (1 << WGM33) | (1 << WGM32) | 1;   	
 }

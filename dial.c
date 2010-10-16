@@ -1,8 +1,7 @@
 /*
  * dial.c
  *
- * There are 3 dials on the cricut machine. All 3 are simple
- * potentiometers with a analog output, connected as follows:
+ * Driver for 3 analog dials, connected as follows:
  *
  * dial  | AVR
  *-------+-----------
@@ -10,9 +9,8 @@
  * speed | PF1 (ADC1)
  * press | PF2 (ADC2)
  *
- * There appears to be a 4th input that's going to a connector that 
- * isn't used. Each input is a simple voltage divider between 0 and 5V, 
- * with a few discrete settings where the pot clicks.
+ * Each input is a simple voltage divider between 0 and 5V, with 
+ * a few discrete settings where the pot clicks.
  *
  * Copyright 2010 <freecutfirmware@gmail.com> 
  *

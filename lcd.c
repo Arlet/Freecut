@@ -1,8 +1,8 @@
 /*
  * lcd.c
  * 
- * Driver for Cricut Personal LCD module. The module is a standard Hitachi H44780 based
- * design, using a 10 pin connector for 4-bit only operation. Pinout of the connector
+ * Driver for LCD module, based on standard Hitachi H44780, using a 
+ * 10 pin connector for 4-bit only operation. Pinout of the connector
  * is as follows:
  *
  * Pin 	|  Func	| AVR
@@ -18,12 +18,14 @@
  *  9   |  D7	| PE7
  * 10   | Light | PF4 (0=On, 1=Off)
  *
- * The display is 16x1 chars, but is actually wired as a 40x2 line display, where the left half
- * is the first line, and the right half is the second line. Addresses for the chars are as follows:
+ * The display is 16x1 chars, but is actually wired as a 40x2 line
+ * display, where the left half is the first line, and the right half
+ * is the second line. Addresses for the chars are as follows:
  *
  * 00 01 02 03 04 05 06 07 | 40 41 42 43 44 45 46 47 
  * 
- * The lcd_putc()/lcd_pos() functions keep this into account, and perform the conversion
+ * The lcd_putc()/lcd_pos() functions keep this into account,
+ * and perform the conversion
  *
  *
  * Copyright 2010 <freecutfirmware@gmail.com> 
