@@ -304,7 +304,7 @@ void cli_poll( void )
 	argc = split_line( buf, argv );
 	if( !setjmp(cmd_error) )
 	    parse( buf );
-	printf( ">" );
+	printf( "%d>", stepper_queued() );
     }
     else if( c == '\b' || c == 0x7f )
     {

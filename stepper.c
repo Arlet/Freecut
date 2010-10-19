@@ -159,7 +159,7 @@ static enum state
  * motion.
  */
 	
-#define CMD_QUEUE_SIZE 4	// must be power of two
+#define CMD_QUEUE_SIZE 8	// must be power of two
 
 enum type
 {
