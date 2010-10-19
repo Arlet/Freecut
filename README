@@ -73,7 +73,7 @@ draw <x> <y>
 	drop pen, and move to coordinates.
 
 curve <x0> <y0> <x1> <y1> <x2> <y2> <x3> <y3>
-	draw cubic Bezier curve
+	drop pen and draw cubic Bezier curve
 
 speed <num>
 	lower numbers are faster. 60 is about the fastest practical
@@ -87,6 +87,9 @@ press <num>
 
 flash
 	just dumps the internal AT45DB041 flash chip in CAR mode.
+
+reset
+	CPU reset
 
 
 Don't send too many commands too quickly. Wait for '>' prompt before sending another line.
