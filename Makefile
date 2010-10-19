@@ -20,8 +20,8 @@ SRC = main.c usb.c lcd.c keypad.c timer.c stepper.c cli.c flash.c dial.c
 ASRC = 
 
 # Optional compiler flags.
-CFLAGS = -D$(MCU) $(TEST) $(CE) -Os -DFCLK=$(FCLK) -fpack-struct \
--fshort-enums -Wall -Wstrict-prototypes 
+CFLAGS  = -D$(MCU) $(TEST) $(CE) -Os -DFCLK=$(FCLK) -fpack-struct 
+CFLAGS += -fshort-enums -Wall -Werror -Wstrict-prototypes 
 
 # Optional assembler flags.
 ASFLAGS = -Wa,-ahlms=$(<:.S=.lst),-gstabs 

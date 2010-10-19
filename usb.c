@@ -23,6 +23,7 @@
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include <avr/wdt.h>
 #include <inttypes.h>
 #include <stdio.h>
 #include "usb.h"
@@ -81,7 +82,7 @@ int usb_putchar( char c, FILE *stream )
     if( c == '\n' )
         usb_putchar( '\r', stream );
     while( (uint8_t) (usb_tx_head - usb_tx_tail) == USB_OUTBUF_LEN )
-	continue;
+	wdt_reset( );
     usb_tx_buf[usb_tx_head++ % USB_OUTBUF_LEN] = c;
     UCSR1B |= (1 << UDRIE1 );
     return 0;
@@ -105,7 +106,7 @@ int usb_getchar( FILE *stream )
     int c;
 
     while( (c = usb_peek()) < 0 )
-        ;
+	wdt_reset( );
     return c;
 }
 

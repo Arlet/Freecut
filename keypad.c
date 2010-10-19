@@ -1,9 +1,7 @@
 /*
  * keypad.c
  *
- * Driver for Cricut Personal keypad, with built-in LED indicators.
- * 
- * keypad is designed as a matrix with 15 rows, and 5 colums. The 15 rows
+ * Keypad is designed as a matrix with 15 rows, and 5 colums. The 15 rows
  * are selected using a 16 bit shift register, with CLK/Data inputs.
  * 
  * NOTE: Due to this design, if you press two (or more) keys in the same row

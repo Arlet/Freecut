@@ -27,7 +27,7 @@
 void stepper_init( void );
 void stepper_tick( void );
 void stepper_move( int x, int y );
-char stepper_draw( int x, int y );
+void stepper_draw( int x, int y );
 void stepper_speed( int delay );
 void stepper_pressure( int pressure );
 void stepper_get_pos( int *x, int *y );

@@ -23,6 +23,7 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/wdt.h>
 #include <inttypes.h>
 #include <stdio.h>
 #include "usb.h"
@@ -62,6 +63,7 @@ void poll_keypad( void )
 
 int main( void )
 {
+    wdt_enable( WDTO_30MS );
     usb_init( );
     timer_init( );
     stepper_init( );
@@ -70,6 +72,8 @@ int main( void )
     keypad_init( );
     flash_init( );
     dial_init( );
+
+    wdt_reset( );
 
     // short beep to show we're awake
     beeper_on( 1760 );
@@ -82,14 +86,12 @@ int main( void )
     while( 1 )
     {
         cli_poll( );
+	wdt_reset( );
 	if( flag_25Hz )
 	{
 	    flag_25Hz = 0;
 	    dial_poll( );
 	    poll_keypad( );
-	    lcd_pos( 0 );
-	    fprintf( &lcd, "sp=%d pr=%d sz=%d", 
-	    	dial_get_speed(), dial_get_pressure(), dial_get_size( ) );
 	}
 	if( flag_Hz )
 	{

@@ -136,7 +136,7 @@ void flash_test( void )
 
     flash_write_cmd( AT_CAR, 0 );
     flash_clocks( 32 );
-    while( --size >= 0 )
+    while( --size >= 0 && usb_peek() != 3 )
     {
         printf( "%02x%c", flash_read_byte(), ++i % 16 ? ' ' : '\n' );
     }
@@ -146,4 +146,5 @@ void flash_test( void )
 void flash_init( void )
 {
     DDRB |= MOSI | SCK | CS;
+    flash_read_status( );
 }

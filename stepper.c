@@ -39,6 +39,7 @@
  *
  */
 
+#include <avr/wdt.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <inttypes.h>
@@ -49,6 +50,8 @@
 #include "timer.h"
 
 #define MAT_EDGE 250			// distance to roll to load mat 
+#define MAX_Y		2400
+#define MAX_X		4800
 
 #define DEBUG	(1 << 5)		// use PB5 for debugging
 #define debug_on()	do { PORTB |= DEBUG; } while(0)
@@ -112,7 +115,18 @@ static uint8_t phase[] =
  */
 
 static int x = -MAT_EDGE, y = 2400; 
-static int x0, y0, x1, y1; 	// line drawing from (x0, y0) -> (x1, y1)
+
+/*
+ * current pressure
+ */
+
+static int pressure = 1023;
+
+/*
+ * experimental soft pen drop parameters
+ */
+int pen_time[4] = { 10, 12, 40 };
+static int pen_seq;
 
 static struct bresenham
 {
@@ -182,7 +196,7 @@ static struct cmd *alloc_cmd( uint8_t type )
     struct cmd *cmd;
 
     while( (uint8_t) (cmd_head - cmd_tail) >= CMD_QUEUE_SIZE )
-        ;
+	wdt_reset( );
     cmd = &cmd_queue[cmd_head % CMD_QUEUE_SIZE];
     cmd->type = type;
     return cmd;
@@ -200,25 +214,32 @@ static struct cmd *get_cmd( void )
 }
 
 /*
- * move to coordinate (x, y) with pen lifted.
+ * move to coordinate (x, y) with pen lifted. We allow moving
+ * beyond the mat so that it will roll out.
  */
 void stepper_move( int x, int y )
 {
     struct cmd *cmd = alloc_cmd( MOVE );
 
+    if( x < -MAT_EDGE || x > MAX_X || y < 0 || y > MAX_Y )
+        return;
     cmd->x = x;
     cmd->y = y;
     cmd_head++;
 }
 
-char stepper_draw( int x, int y )
+/*
+ * draw to coordinate (x, y) with pen dropped. 
+ */
+void stepper_draw( int x, int y )
 {
     struct cmd *cmd = alloc_cmd( DRAW );
 
+    if( x < 0 || x > MAX_X || y < 0 || y > MAX_Y )
+        return;
     cmd->x = x;
     cmd->y = y;
     cmd_head++;
-    return (char) (cmd_head - cmd_tail); 
 }
 
 void stepper_speed( int speed )
@@ -283,8 +304,9 @@ void stepper_get_pos( int *px, int *py )
 static void pen_up( void )
 {
     if( PORTE & PEN )
-        delay = 100;
+        delay = 50;
     PORTE &= ~PEN;
+    pen_seq = -1;
 }
 
 /*
@@ -292,37 +314,44 @@ static void pen_up( void )
  */
 static void pen_down( void )
 {
-    if( !(PORTE & PEN) )
-        delay = 80;
-    PORTE |= PEN;
+    if( PORTE & PEN )	// already down, ignore
+       return;
+    /*
+     * soft pen drop with lowest pressure
+     */
+    timer_set_pen_pressure( 1023 );
+    PORTE |= PEN;	
+    pen_seq = 0;
+    delay = pen_time[2];
 }
 
 /*
- * initialize Bresenham line drawing algorithm.
+ * initialize Bresenham line drawing algorithm. Draw from (x, y) 
+ * to (x1, y1).
  */
-static void bresenham_init( void )
+static void bresenham_init( int x1, int y1 )
 {
     int dx, dy;
 
-    if( x1 > x0 ) 
+    if( x1 > x ) 
     { 
 	b.dx = 1;
-        dx = x1 - x0;
+        dx = x1 - x;
     }
     else
     {
 	b.dx = -1;
-	dx = x0 - x1;
+	dx = x - x1;
     }
-    if( y1 > y0 )
+    if( y1 > y )
     {
 	b.dy = 1;
-        dy = y1 - y0;
+        dy = y1 - y;
     }
     else
     {
 	b.dy = -1;
-        dy = y0 - y1;
+        dy = y - y1;
     }
     if( dx > dy )
     {
@@ -378,28 +407,27 @@ enum state do_next_command( void )
     switch( cmd->type )
     {
 	case MOVE: 
-	    if( x != cmd->x || y != cmd->y )
-		pen_up(); 
-	    break;
-
 	case DRAW: 
-	    pen_down(); 
-	    break;
+	    // FIXME: avoid null-movements earlier 
+	    if( x == cmd->x && y == cmd->y )
+	        return READY;
+	    if( cmd->type == MOVE )
+		pen_up(); 
+	    else
+	        pen_down( );
+	    bresenham_init( cmd->x, cmd->y );
+	    return LINE;
 
 	case PRESSURE:
-	    timer_set_pen_pressure( cmd->x );
-	    return READY;
+	    pressure = cmd->x;
+	    timer_set_pen_pressure( pressure );
+	    break;
 
 	case SPEED:
 	    timer_set_stepper_speed( cmd->x );
-	    return READY;
+	    break;
     }
-    x0 = x;
-    y0 = y;
-    x1 = cmd->x;
-    y1 = cmd->y;
-    bresenham_init( );
-    return LINE;
+    return READY;
 }
 
 /*
@@ -408,7 +436,34 @@ enum state do_next_command( void )
  */
 void stepper_tick( void )
 {
-    debug_on( );	// for checking timing on scope
+    /*
+     * experimental soft pen drop.
+     * A. At time=0, pen is dropped with minimal pressure
+     * B. At time=pen_time[0] pen is lifted again
+     * C. At time=pen_time[1] pen is dropped with set pressure
+     *
+     * The B-C interval should be short enough such that the pen 
+     * isn't actually going back up, but just loses most of its
+     * downward speed. This fixed the 'heavy dot' problem at the 
+     * the start of a stroke. Unfortunately, there's still a 
+     * 'heavy dot' when the pen is lifted. 
+     *
+     * Timing is still tied to stepper tick units, which should be 
+     * fixed. 
+     */
+    if( pen_seq >= 0 )
+    {
+	pen_seq++;
+	if( pen_seq >= pen_time[1] )
+	{
+	    PORTE |= PEN;
+	    timer_set_pen_pressure( pressure );
+	    pen_seq = -1;
+	}
+	else if( pen_seq >= pen_time[0] )
+	    PORTE &= ~PEN;
+    }
+    
     if( delay && --delay )
         return;
 
@@ -465,14 +520,13 @@ again:
 	PORTA = phase[x & 0x0f];	// low 4 bits determine phase
 	PORTC = phase[y & 0x0f];
     }
-    debug_off( );
 }
 
 void stepper_init( void )
 {
     stepper_off( );
     pen_up( );
-    DDRB |= DEBUG;
+    //DDRB |= DEBUG;
     DDRA = 0xff;
     DDRC = 0xff;
     DDRE |= PEN;

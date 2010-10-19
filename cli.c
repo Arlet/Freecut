@@ -20,14 +20,14 @@
  *
  */
 
+#include <avr/wdt.h>
+#include <avr/pgmspace.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <setjmp.h>
-#include <avr/eeprom.h>
-#include <avr/pgmspace.h>
 #include <math.h>
 #include "timer.h"
 #include "cli.h"
@@ -44,7 +44,7 @@ static char *argv[MAX_ARGS+1];
 static uint8_t buf_len = 0;
 static uint8_t argc;
 static uint8_t curtok;
-static char echo = 1;
+static char echo = 0;
 static jmp_buf cmd_error;
 
 enum
@@ -59,6 +59,7 @@ enum
     C_PRESS,
     C_CURVE,
     C_FLASH,
+    C_RESET,
 };
 
 static struct token
@@ -70,7 +71,7 @@ static struct token
 
 static const struct keyword
 {
-    char str[9];
+    char str[10];
     uint8_t class;
 } keyword_list[] PROGMEM = 
 {
@@ -81,7 +82,9 @@ static const struct keyword
     { "speed", 	  C_SPEED },
     { "curve",    C_CURVE },
     { "press",    C_PRESS },
+    { "pressure", C_PRESS },
     { "flash", 	  C_FLASH },
+    { "reset", 	  C_RESET },
 };
 
 #define MAX_KEYWORDS (sizeof(keyword_list) / sizeof(*keyword_list))
@@ -133,7 +136,7 @@ static void expect_token( uint8_t class, const char *what )
 {
     if( get_token() == class )
 	return;
-    printf( "expected %s, got '%s'", what, token.lex );
+    printf( "expected %s, got '%s'\n", what, token.lex );
     longjmp( cmd_error, 1 );
 }
 
@@ -180,6 +183,8 @@ static void parse_move( void )
     uint16_t x = parse_num( );
     uint16_t y = parse_num( );
 
+    if( x < 0 )
+        x = 0;
     stepper_move( x, y );
 }
 
@@ -269,16 +274,11 @@ static void parse( char *buf )
 	    break;
 
 	default:
-	    printf( "unknown command '%s'", token.lex );
+	    printf( "unknown command '%s'\n", token.lex );
 	    return;
     }
     if( get_token() != C_EOL )
-	printf( "unrecognized parameter '%s'", token.lex );
-}
-
-void prompt( void )
-{
-    printf( ">" );
+	printf( "unrecognized parameter '%s'\n", token.lex );
 }
 
 void cli_poll( void )
@@ -294,10 +294,8 @@ void cli_poll( void )
 	buf_len = 0;
 	argc = split_line( buf, argv );
 	if( !setjmp(cmd_error) )
-	{
 	    parse( buf );
-	}
-	prompt( );
+	printf( ">" );
     }
     else if( c == '\b' || c == 0x7f )
     {
@@ -308,6 +306,8 @@ void cli_poll( void )
 		printf( "\b \b" );
 	}
     }
+    else if( c == 5 )
+        echo ^= 1;
     else if( isprint(c) && buf_len < BUFLEN )
     {
 	if( echo )
