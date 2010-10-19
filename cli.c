@@ -22,6 +22,7 @@
 
 #include <avr/wdt.h>
 #include <avr/pgmspace.h>
+#include <avr/interrupt.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -256,6 +257,13 @@ static void parse_pressure( void )
     stepper_pressure( parse_num() );
 }
 
+static void parse_reset( void )
+{
+    cli( );
+    wdt_enable( WDTO_15MS );
+    while( 1 ); 
+}
+
 static void parse( char *buf )
 {
     curtok = 0;
@@ -269,6 +277,7 @@ static void parse( char *buf )
 	case C_PRESS:   parse_pressure( ); break;
 	case C_CURVE: 	parse_curve( ); break;
 	case C_FLASH:   parse_flash( ); break;
+	case C_RESET:	parse_reset( ); break;
 
 	case C_EOL:
 	    break;

@@ -82,6 +82,7 @@ int main( void )
 
     // connect stdout to USB port
     stdout = &usb; 
+    printf( "Freecut v" VERSION "\n\n" );
     fprintf( &lcd, "Freecut v" VERSION );
     while( 1 )
     {
